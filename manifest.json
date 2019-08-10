@@ -1,0 +1,26 @@
+{
+  "name": "GeoGuessr timer",
+  "version": "0.0.1",
+  "description": "Adds a timer to GeoGuessr",
+  "manifest_version": 2,
+  "permissions": [
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "src/play.js"
+      ],
+      "matches": [
+        "https://www.geoguessr.com/*/play"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "img/icon-16.png",
+    "32": "img/icon-32.png",
+    "48": "img/icon-48.png",
+    "128": "img/icon-128.png"
+  }
+}
