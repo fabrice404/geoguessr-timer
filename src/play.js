@@ -1,7 +1,8 @@
 const TICK_INTERVAL = 1000;
+const bsr = chrome != null ? chrome : browser;
 
 let totalDate = null;
-let rounds = {
+const rounds = {
   1: { begin: null, end: null },
   2: { begin: null, end: null },
   3: { begin: null, end: null },
@@ -14,22 +15,22 @@ let uiRound = '';
 const msToHHMMss = (ms) => {
   let seconds = Math.round(ms / 1000);
 
-  let hours = parseInt(seconds / 3600);
-  seconds = seconds % 3600;
+  const hours = parseInt(seconds / 3600, 10);
+  seconds %= 3600;
 
-  let minutes = parseInt(seconds / 60);
-  seconds = seconds % 60;
+  const minutes = parseInt(seconds / 60, 10);
+  seconds %= 60;
 
   if (hours > 0) {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
+};
 
 const init = () => {
   const totalNode = document.createElement('article');
   totalNode.setAttribute('class', 'game-info__section game-info__section--timer-total');
-  totalNode.innerHTML = `<span class="game-info__label">Total time</span><span class="game-info__value" id="timer-total">--:--</span>`;
+  totalNode.innerHTML = '<span class="game-info__label">Total time</span><span class="game-info__value" id="timer-total">--:--</span>';
   document.getElementsByClassName('game-info')[0].prepend(totalNode);
 
   for (let i = 5; i > 0; i -= 1) {
@@ -62,11 +63,11 @@ const showTimes = () => {
 
   const score = document.getElementsByClassName('score__progress__points')[0];
   let content = score.innerHTML;
-  content += ` and your total time was <b>${totalTime}</b><br>`
+  content += ` and your total time was <b>${totalTime}</b><br>`;
   content += Object.keys(rounds)
     .map((key) => {
       const roundTime = msToHHMMss(rounds[key].end - rounds[key].begin);
-      return `Round ${key}: ${roundTime}`
+      return `Round ${key}: ${roundTime}`;
     })
     .join(' | ');
   score.innerHTML = content;
@@ -96,6 +97,12 @@ const tick = () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  init();
-  tick();
+  bsr.storage.sync.get({
+    active: true,
+  }, (cfg) => {
+    if (cfg.active) {
+      init();
+      tick();
+    }
+  });
 });

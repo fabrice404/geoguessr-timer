@@ -1,9 +1,11 @@
 {
   "name": "GeoGuessr timer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "This extension adds timers to GeoGuessr score bar",
   "manifest_version": 2,
-  "permissions": [],
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [
     {
       "js": [
@@ -28,5 +30,8 @@
     "gecko": {
       "id": "geoguessr-timer@lamant.io"
     }
+  },
+  "options_ui": {
+    "page": "src/settings.html"
   }
 }
