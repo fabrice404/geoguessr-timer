@@ -1,6 +1,6 @@
 {
   "name": "GeoGuessr timer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This extension adds timers to GeoGuessr score bar",
   "manifest_version": 2,
   "permissions": [],
@@ -11,7 +11,9 @@
       ],
       "matches": [
         "https://geoguessr.com/*/play",
-        "https://www.geoguessr.com/*/play"
+        "https://www.geoguessr.com/*/play",
+        "https://geoguessr.com/challenge/*",
+        "https://www.geoguessr.com/challenge/*"
       ],
       "run_at": "document_start"
     }
