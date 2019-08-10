@@ -1,0 +1,24 @@
+{
+  "name": "geoguessr-timer",
+  "version": "0.0.3",
+  "main": "scripts/build.js",
+  "repository": "git@github.com:fabrice404/geoguessr-timer.git",
+  "author": "fabrice404 <fabrice.lamant@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon build -e js,json,html,css --ignore dist/",
+    "build": "node build",
+    "lint": "eslint ./"
+  },
+  "dependencies": {
+    "archiver": "^3.1.1",
+    "copy-dir": "^1.1.0",
+    "rimraf": "^2.6.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "nodemon": "^1.19.1"
+  }
+}

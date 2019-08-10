@@ -1,0 +1,40 @@
+body {
+  font-size: 12pt;
+  min-width: 280px;
+}
+
+h1 {
+  font-size: 14pt;
+}
+
+div {
+  margin: 10px 0;
+  clear: both;
+}
+
+label {
+  display: inline-block;
+  padding-left: 15px;
+  text-indent: -15px;
+}
+
+input {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  margin: 0;
+  vertical-align: bottom;
+  position: relative;
+  top: -1px;
+  *overflow: hidden;
+}
+
+button {
+  background-color: #2e9fd1;
+  border: 1px solid #2e9fd1;
+  border-radius: 5px;
+  color: white;
+  float: right;
+  font-size: 12pt;
+  padding: 5px 15px;
+}
