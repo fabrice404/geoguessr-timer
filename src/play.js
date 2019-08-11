@@ -27,17 +27,39 @@ const msToHHMMss = (ms) => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-const init = () => {
+const init = (cfg) => {
+  // calculate new columns positions
+  let totalPosition = cfg.columns.indexOf('totalTime');
+  let roundsPosition = cfg.columns.indexOf('roundTimes');
+
+  const gameInfo = document.getElementsByClassName('game-info')[0];
+
+  // create new node
   const totalNode = document.createElement('article');
   totalNode.setAttribute('class', 'game-info__section game-info__section--timer-total');
   totalNode.innerHTML = '<span class="game-info__label">Total time</span><span class="game-info__value" id="timer-total">--:--</span>';
-  document.getElementsByClassName('game-info')[0].prepend(totalNode);
+  // rounds are inserted after total
+  if (roundsPosition < totalPosition) {
+    totalPosition -= 1;
+  }
+  if (gameInfo.children.length <= totalPosition) {
+    gameInfo.append(totalNode);
+  }
+  else {
+    gameInfo.insertBefore(totalNode, gameInfo.children[totalPosition]);
+  }
 
-  for (let i = 5; i > 0; i -= 1) {
+  for (let i = 1; i <= 5; i += 1) {
     const roundNode = document.createElement('article');
     roundNode.setAttribute('class', `game-info__section game-info__section--timer-round-${i}`);
     roundNode.innerHTML = `<span class="game-info__label">Round ${i}</span><span class="game-info__value" id="timer-round-${i}">--:--</span>`;
-    document.getElementsByClassName('game-info')[0].prepend(roundNode);
+    if (gameInfo.children.length <= roundsPosition) {
+      gameInfo.append(roundNode);
+    }
+    else {
+      gameInfo.insertBefore(roundNode, gameInfo.children[roundsPosition]);
+    }
+    roundsPosition += 1;
   }
 };
 
@@ -99,9 +121,10 @@ const tick = () => {
 window.addEventListener('DOMContentLoaded', () => {
   bsr.storage.sync.get({
     active: true,
+    columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
   }, (cfg) => {
     if (cfg.active) {
-      init();
+      init(cfg);
       tick();
     }
   });
