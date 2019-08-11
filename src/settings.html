@@ -10,13 +10,26 @@
   <h1><img src="../img/icon-32.png" /> GeoGuessr timer settings</h1>
 
   <div>
-    <label>Active</label>
-    <input type="checkbox" id="active">
+    <span class="label">Enable extension</span>
+    <label class="switch">
+      <input type="checkbox" id="active">
+      <span class="slider"></span>
+    </label>
   </div>
 
-  <button id="save">Save</button><span id="status"></span>
+  <div>
+    <span class="label">Colums order</span>
+    <ul id="columns" class="columns">
+    </ul>
+  </div>
 
-  <div></div>
+  <div class="right">
+    <button id="reset" class="reset">Reset</button>
+    <button id="save" class="submit">Save</button>
+    <a href="http://www.geoguessr.com/" target="_blank" class="geoguessr">Go to GeoGuessr</a>
+  </div>
+
+  <div id="debug"></div>
 
   <script src="settings.js"></script>
 </body>
