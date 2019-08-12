@@ -2,6 +2,8 @@ const TICK_INTERVAL = 1000;
 const bsr = chrome != null ? chrome : browser;
 
 let totalDate = null;
+let currentRound = 0;
+let uiRound = '';
 const rounds = {
   1: { begin: null, end: null },
   2: { begin: null, end: null },
@@ -9,8 +11,6 @@ const rounds = {
   4: { begin: null, end: null },
   5: { begin: null, end: null },
 };
-let currentRound = 0;
-let uiRound = '';
 
 const msToHHMMss = (ms) => {
   let seconds = Math.round(ms / 1000);
@@ -22,15 +22,15 @@ const msToHHMMss = (ms) => {
   seconds %= 60;
 
   if (hours > 0) {
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
-const init = (cfg) => {
+const init = (config) => {
   // calculate new columns positions
-  let totalPosition = cfg.columns.indexOf('totalTime');
-  let roundsPosition = cfg.columns.indexOf('roundTimes');
+  let totalPosition = config.columns.indexOf('totalTime');
+  let roundsPosition = config.columns.indexOf('roundTimes');
 
   const gameInfo = document.getElementsByClassName('game-info')[0];
 
@@ -44,8 +44,7 @@ const init = (cfg) => {
   }
   if (gameInfo.children.length <= totalPosition) {
     gameInfo.append(totalNode);
-  }
-  else {
+  } else {
     gameInfo.insertBefore(totalNode, gameInfo.children[totalPosition]);
   }
 
@@ -55,8 +54,7 @@ const init = (cfg) => {
     roundNode.innerHTML = `<span class="game-info__label">Round ${i}</span><span class="game-info__value" id="timer-round-${i}">--:--</span>`;
     if (gameInfo.children.length <= roundsPosition) {
       gameInfo.append(roundNode);
-    }
-    else {
+    } else {
       gameInfo.insertBefore(roundNode, gameInfo.children[roundsPosition]);
     }
     roundsPosition += 1;
@@ -118,14 +116,16 @@ const tick = () => {
   }
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+const loadConfig = (config) => {
+  if (config.active) {
+    init(config);
+    tick();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
   bsr.storage.sync.get({
     active: true,
     columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
-  }, (cfg) => {
-    if (cfg.active) {
-      init(cfg);
-      tick();
-    }
-  });
+  }, (config) => { loadConfig(config); });
 });
