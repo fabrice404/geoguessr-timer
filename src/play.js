@@ -1,10 +1,8 @@
 const TICK_INTERVAL = 1000;
 const bsr = chrome != null ? chrome : browser;
 
-let totalDate = null;
 let currentRound = 0;
-let uiRound = '';
-const rounds = {
+const roundsTime = {
   1: { begin: null, end: null },
   2: { begin: null, end: null },
   3: { begin: null, end: null },
@@ -12,7 +10,10 @@ const rounds = {
   5: { begin: null, end: null },
 };
 
-const msToHHMMss = (ms) => {
+/**
+ * Converts a number of milliseconds to time HH:mm:ss(.ms)
+ */
+const msToTime = (ms, showMs = false) => {
   let seconds = Math.round(ms / 1000);
 
   const hours = parseInt(seconds / 3600, 10);
@@ -21,12 +22,23 @@ const msToHHMMss = (ms) => {
   const minutes = parseInt(seconds / 60, 10);
   seconds %= 60;
 
+  let result = '';
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    result += `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  } else {
+    result += `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+  if (showMs) {
+    result += `.${Math.round(ms % 1000).toString().padEnd(3, '0')}`;
+  }
+  return result;
 };
 
+/**
+ * Adds the timers in the UI
+ * @param {*} config
+ */
 const init = (config) => {
   // calculate new columns positions
   let totalPosition = config.columns.indexOf('totalTime');
@@ -61,68 +73,125 @@ const init = (config) => {
   }
 };
 
-const newRound = () => {
-  const now = new Date();
-  if (totalDate == null) {
-    totalDate = now;
-  }
-  if (rounds[currentRound] != null) {
-    rounds[currentRound].end = now;
-    const roundTime = msToHHMMss(now - rounds[currentRound].begin);
-    document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
-  }
-  currentRound += 1;
-  if (rounds[currentRound] != null) {
-    rounds[currentRound].begin = now;
-  }
-};
-
-const showTimes = () => {
-  const now = new Date();
-  const totalTime = msToHHMMss(now - totalDate);
-
+/**
+ * Show result in final score
+ */
+const showFinalTimes = () => {
+  const totalTime = msToTime(roundsTime['5'].end - roundsTime['1'].begin);
+  let totalSum = 0;
   const score = document.getElementsByClassName('score__progress__points')[0];
-  let content = score.innerHTML;
-  content += ` and your total time was <b>${totalTime}</b><br>`;
-  content += Object.keys(rounds)
+
+  const rounds = Object.keys(roundsTime)
     .map((key) => {
-      const roundTime = msToHHMMss(rounds[key].end - rounds[key].begin);
-      return `Round ${key}: ${roundTime}`;
+      const roundTime = msToTime(roundsTime[key].end - roundsTime[key].begin, true);
+      totalSum += (roundsTime[key].end - roundsTime[key].begin);
+      return `<td>${roundTime}</td>`;
     })
-    .join(' | ');
-  score.innerHTML = content;
+    .join('');
+
+  score.innerHTML = `${score.innerHTML}, 
+    your total time was <b>${totalTime}</b>, 
+    and the sum of round was <b>${msToTime(totalSum, true)}</b>
+    <br/><br/>
+    <center>
+      <table cellpadding=5 cellspacing=0 border=1>
+        <tbody>
+          <tr><td>Round 1</td><td>Round 2</td><td>Round 3</td><td>Round 4</td><td>Round 5</td></tr>
+          <tr>${rounds}</tr>
+        </tbody>
+      </table>
+    </center>
+    <br/>`;
 };
 
-const tick = () => {
-  const nodeRoundText = document.getElementsByClassName('game-info__section--round')[0].innerText;
-  if (nodeRoundText !== uiRound) {
-    newRound();
-    uiRound = nodeRoundText;
+/**
+ * Starts a new round timer
+ */
+const startRound = () => {
+  const now = new Date();
+  currentRound += 1;
+  if (currentRound > 0 && currentRound <= 5) {
+    roundsTime[currentRound.toString()].begin = now;
+    console.log(`Round ${currentRound} > ${now.toISOString()}`);
   }
+};
 
+/**
+ * Ends the current round timer
+ */
+const stopRound = () => {
+  const now = new Date();
+  if (currentRound > 0 && currentRound <= 5) {
+    roundsTime[currentRound.toString()].end = now;
+    const roundTimeAccurate = msToTime(
+      roundsTime[currentRound.toString()].end - roundsTime[currentRound.toString()].begin,
+      true,
+    );
+    document.getElementById(`timer-round-${currentRound}`).innerText = roundTimeAccurate;
+    console.log(`Round ${currentRound} < ${now.toISOString()}`);
+    console.log(`Round ${currentRound} finished in ${roundTimeAccurate}`);
+  }
+};
+
+/**
+ * Recursive function that updates the UI
+ */
+const tick = () => {
   if (document.getElementsByClassName('score__final').length > 0) {
-    newRound();
-    showTimes();
+    showFinalTimes();
   } else {
-    const now = new Date();
+    if (currentRound > 0 && currentRound <= 5) {
+      const now = new Date();
 
-    const totalTime = msToHHMMss(now - totalDate);
-    document.getElementById('timer-total').innerText = totalTime;
+      const totalTime = msToTime(now - roundsTime['1'].begin);
+      document.getElementById('timer-total').innerText = totalTime;
 
-    const roundTime = msToHHMMss(now - rounds[currentRound].begin);
-    document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
-
+      if (roundsTime[currentRound.toString()].end == null) {
+        const roundTime = msToTime(now - roundsTime[currentRound.toString()].begin);
+        document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
+      }
+    }
     setTimeout(tick, TICK_INTERVAL);
   }
 };
 
+/**
+ * Load extension config, add observers to start/stop timers,
+ * and starts the timer if no modal is shown
+ * @param {*} config
+ */
 const loadConfig = (config) => {
   if (config.active) {
     init(config);
+
+    const observer = new MutationObserver((mutations) => {
+      const added = mutations[0].addedNodes.length;
+      const removed = mutations[0].removedNodes.length;
+      if (added > removed) {
+        stopRound();
+      } else if (removed > added) {
+        startRound();
+      }
+    });
+    const observerOptions = { childList: true, subtree: false };
+    observer.observe(document.getElementById('js__checkpoint-modal').childNodes[0], observerOptions);
+    observer.observe(document.getElementById('js__accept-challenge-modal').childNodes[0], observerOptions);
+    observer.observe(document.getElementById('js__score').childNodes[0].childNodes[2], observerOptions);
+
+    if (
+      document.getElementById('js__checkpoint-modal').textContent.trim() === ''
+      && document.getElementById('js__accept-challenge-modal').textContent.trim() === ''
+    ) {
+      startRound();
+    }
+
     tick();
   }
 };
 
+/**
+ * Load config from local storage when DOM is loaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
   bsr.storage.sync.get({
     active: true,
