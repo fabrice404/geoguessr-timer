@@ -79,7 +79,7 @@ const loadSettings = () => {
   });
 };
 
-const save = () => {
+const saved = () => {
   const btn = document.getElementById('save');
   btn.textContent = 'Saved!';
   setTimeout(() => { btn.textContent = 'Save'; }, 1000);
@@ -103,7 +103,7 @@ document.getElementById('save')
     bsr.storage.sync.set({
       active,
       columns,
-    }, () => { save(); });
+    }, () => { saved(); });
   });
 
 document.getElementById('reset')
