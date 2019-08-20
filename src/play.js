@@ -105,17 +105,29 @@ const save = () => {
       savegame[currentMap].bestSegments[i] = finalTimes[i];
     }
   } else {
+    let newRecord = false;
     if (savegame[currentMap].personalBest > finalTime) {
-      console.log('New personal best!');
-      savegame[currentMap].personalBest = finalTime;
-      for (let i = 1; i <= 5; i += 1) {
-        savegame[currentMap].personalBestSplits[i] = finalTimes[i];
-      }
+      newRecord = true;
     }
     for (let i = 1; i <= 5; i += 1) {
       if (savegame[currentMap].bestSegments[i] > finalTimes[i]) {
-        console.log(`New best split on round ${i}!`);
-        savegame[currentMap].bestSegments[i] = finalTimes[i];
+        newRecord = true;
+      }
+    }
+
+    if (newRecord && window.confirm('You have beaten one of you best times, do you want to save it?')) {
+      if (savegame[currentMap].personalBest > finalTime) {
+        console.log('New personal best!');
+        savegame[currentMap].personalBest = finalTime;
+        for (let i = 1; i <= 5; i += 1) {
+          savegame[currentMap].personalBestSplits[i] = finalTimes[i];
+        }
+      }
+      for (let i = 1; i <= 5; i += 1) {
+        if (savegame[currentMap].bestSegments[i] > finalTimes[i]) {
+          console.log(`New best split on round ${i}!`);
+          savegame[currentMap].bestSegments[i] = finalTimes[i];
+        }
       }
     }
   }

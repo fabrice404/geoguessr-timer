@@ -4,8 +4,7 @@
 <head>
   <title>GeoGuessr timer</title>
   <link href="https://fonts.googleapis.com/css?family=Raleway|Poppins&display=swap" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="./reset.css">
-  <link rel="stylesheet" type="text/css" href="./settings.css">
+  <link rel="stylesheet" type="text/css" href="./style.css">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
 </head>
 
@@ -16,43 +15,11 @@
   </header>
 
   <div class="content">
-
-    <div class="row flex">
-      <span class="label">Enable extension</span>
-      <span class="value">
-        <label class="switch">
-          <input type="checkbox" id="active">
-          <span class="slider"></span>
-        </label>
-      </span>
-    </div>
-
-    <div class="row flex">
-      <span class="label">Enable colors</span>
-      <span class="value">
-        <label class="switch">
-          <input type="checkbox" id="colors">
-          <span class="slider"></span>
-        </label>
-      </span>
-    </div>
-
+    <div class="times"></div>
     <div class="row">
-      <span class="label">Columns order</span>
-      <ul id="columns" class="columns">
-      </ul>
-    </div>
-
-    <div class="row link">
-      <a href="./times.html" target="_blank">Personal best times</a>
-    </div>
-
-    <div class="row link">
-      <a href="http://www.geoguessr.com/" target="_blank" class="geoguessr">GeoGuessr</a>
-    </div>
-
-    <div class="row link">
-      <a href="#" target="_blank" class="reset" id="reset">Clear settings and times</a>
+      <button id="export" class="button">Export</button>
+      <button id="import" class="button">Import</button>
+      <input id="import-file" type="file" style="display: none;" />
     </div>
   </div>
 
