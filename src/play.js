@@ -2,6 +2,7 @@ const TICK_INTERVAL = 1000;
 const bsr = chrome != null ? chrome : browser;
 
 let savegame;
+let colors = true;
 let currentMap = '';
 let currentRound = 0;
 const roundsTime = {
@@ -42,6 +43,8 @@ const msToTime = (ms, showMs = false) => {
  * @param {*} config
  */
 const init = (config) => {
+  colors = config.colors;
+
   // calculate new columns positions
   let totalPosition = config.columns.indexOf('totalTime');
   let roundsPosition = config.columns.indexOf('roundTimes');
@@ -172,9 +175,10 @@ const stopRound = () => {
   if (currentRound > 0 && currentRound <= 5) {
     roundsTime[currentRound].end = now;
     const roundTimeMs = roundsTime[currentRound].end - roundsTime[currentRound].begin;
-    const roundTimeAccurate = msToTime(roundTimeMs, true);
-    document.getElementById(`timer-round-${currentRound}`).innerText = roundTimeAccurate;
-    if (savegame[currentMap] != null) {
+    const roundTime = msToTime(roundTimeMs, false);
+    const roundTimeAccurate = msToTime(roundTimeMs);
+    document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
+    if (savegame[currentMap] != null && colors) {
       let color = savegame[currentMap].personalBestSplits[currentRound] > roundTimeMs ? 'green' : 'red';
       if (savegame[currentMap].bestSegments[currentRound] > roundTimeMs) {
         color = 'gold';
@@ -210,7 +214,7 @@ const tick = () => {
       }
       totalTimeMs += (now - roundsTime[currentRound].begin);
       document.getElementById('timer-total').innerText = msToTime(totalTimeMs);
-      if (savegame[currentMap] != null) {
+      if (savegame[currentMap] != null && colors) {
         let totalTimePB = 0;
         for (let i = 1; i <= currentRound; i += 1) {
           totalTimePB += savegame[currentMap].personalBestSplits[i];
@@ -223,7 +227,7 @@ const tick = () => {
       if (roundsTime[currentRound].end == null) {
         const roundTime = msToTime(roundTimeMs);
         document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
-        if (savegame[currentMap] != null) {
+        if (savegame[currentMap] != null && colors) {
           const color = savegame[currentMap].personalBestSplits[currentRound] > roundTimeMs ? 'green' : 'red';
           document.getElementById(`timer-round-${currentRound}`).setAttribute('style', `color: ${color}`);
         }
@@ -275,6 +279,7 @@ const loadConfig = (config) => {
 document.addEventListener('DOMContentLoaded', () => {
   bsr.storage.sync.get({
     active: true,
+    colors: false,
     columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
     savegame: {},
   }, (config) => { loadConfig(config); });
