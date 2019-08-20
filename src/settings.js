@@ -71,9 +71,11 @@ const loadColumns = () => {
 const loadSettings = () => {
   bsr.storage.sync.get({
     active: true,
+    colors: false,
     columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
   }, (cfg) => {
     document.getElementById('active').checked = cfg.active;
+    document.getElementById('colors').checked = cfg.colors;
     columns = cfg.columns;
     loadColumns();
   });
@@ -100,8 +102,10 @@ document.addEventListener('DOMContentLoaded', () => loadSettings());
 document.getElementById('save')
   .addEventListener('click', () => {
     const active = document.getElementById('active').checked;
+    const colors =  document.getElementById('colors').checked;
     bsr.storage.sync.set({
       active,
+      colors,
       columns,
     }, () => { saved(); });
   });
