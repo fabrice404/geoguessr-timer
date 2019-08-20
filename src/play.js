@@ -105,17 +105,29 @@ const save = () => {
       savegame[currentMap].bestSegments[i] = finalTimes[i];
     }
   } else {
+    let newRecord = false;
     if (savegame[currentMap].personalBest > finalTime) {
-      console.log(`New personal best!`);
-      savegame[currentMap].personalBest = finalTime;
-      for (let i = 1; i <= 5; i += 1) {
-        savegame[currentMap].personalBestSplits[i] = finalTimes[i];
-      }
+      newRecord = true;
     }
     for (let i = 1; i <= 5; i += 1) {
       if (savegame[currentMap].bestSegments[i] > finalTimes[i]) {
-        console.log(`New best split on round ${i}!`);
-        savegame[currentMap].bestSegments[i] = finalTimes[i];
+        newRecord = true;
+      }
+    }
+
+    if (newRecord && window.confirm('You have beaten one of you best times, do you want to save it?')) {
+      if (savegame[currentMap].personalBest > finalTime) {
+        console.log('New personal best!');
+        savegame[currentMap].personalBest = finalTime;
+        for (let i = 1; i <= 5; i += 1) {
+          savegame[currentMap].personalBestSplits[i] = finalTimes[i];
+        }
+      }
+      for (let i = 1; i <= 5; i += 1) {
+        if (savegame[currentMap].bestSegments[i] > finalTimes[i]) {
+          console.log(`New best split on round ${i}!`);
+          savegame[currentMap].bestSegments[i] = finalTimes[i];
+        }
       }
     }
   }
@@ -220,10 +232,10 @@ const tick = () => {
           totalTimePB += savegame[currentMap].personalBestSplits[i];
         }
         const color = totalTimePB > totalTimeMs ? 'green' : 'red';
-        document.getElementById(`timer-total`).setAttribute('style', `color: ${color}`);
+        document.getElementById('timer-total').setAttribute('style', `color: ${color}`);
       }
 
-      const roundTimeMs = now - roundsTime[currentRound].begin
+      const roundTimeMs = now - roundsTime[currentRound].begin;
       if (roundsTime[currentRound].end == null) {
         const roundTime = msToTime(roundTimeMs);
         document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;

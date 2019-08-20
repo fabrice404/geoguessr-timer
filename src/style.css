@@ -1,0 +1,240 @@
+/*
+  Reset
+*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+body {
+  min-width: 430px;
+  color: #333333;
+}
+
+/* 
+  Header
+*/
+
+.header {
+  font-family: 'Raleway', sans-serif;
+  background-color: #4a4a50;
+  color: #dddddd;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+}
+
+.header .title {
+  font-size: 14px;
+  line-height: 14px;
+  height: 14px;
+  margin-left: 14px;
+}
+
+.header .logo {
+  vertical-align: baseline;
+}
+
+/* 
+  Content
+*/
+
+.content {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}
+
+.content .row {
+  border-bottom: 2px solid #F5F5F5;
+  padding: 15px 30px;
+  justify-content: space-between;
+}
+
+.content .row.flex {
+  display: flex;
+  align-items: center;
+}
+
+.content .row.link {
+  padding: 0;
+}
+
+.content .row.link a {
+  padding: 15px 30px;
+  display: block;
+  text-decoration: none;
+}
+
+.content .row.link a::after {
+  position: absolute;
+  content: '>';
+  right: 30px;
+}
+
+a {
+  color: inherit;
+}
+
+.geoguessr {
+  color: #cc302e;
+}
+
+.reset {
+  color: #dddddd !important;
+}
+
+/* 
+  Checkbox slider
+*/
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 25px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  border-radius: 25px;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .1s;
+  transition: .1s;
+}
+
+.slider:before {
+  border-radius: 50%;
+  position: absolute;
+  content: "";
+  height: 21px;
+  width: 21px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .1s;
+  transition: .1s;
+}
+
+input:checked+.slider {
+  background-color: #2e9fd1;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2e9fd1;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* 
+  Columns
+*/
+
+.columns {
+  display: block;
+  list-style-type: none;
+  margin: 5px 0 0;
+  padding: 0;
+  text-align: center;
+}
+
+.columns li {
+  font-family: 'Raleway';
+  text-align: center;
+  font-size: 9pt;
+  display: inline-block;
+  margin: 1px;
+  padding: 4px;
+  background-color: #fafafa;
+  height: 60px;
+  width: 60px;
+  vertical-align: top;
+  border: 2px solid #e5e5e5;
+}
+
+.columns li span {
+  display: block;
+}
+
+.columns li button {
+  margin: 10px 1px 0;
+  cursor: pointer;
+  background-color: #2e9fd1;
+  border: 1px solid #2e9fd1;
+  border-radius: 3px;
+  color: white;
+}
+
+.table {
+  width: 100%;
+  margin-top: 10px;
+  table-layout: fixed;
+}
+
+.table th {
+  background-color: #fafafa;
+  border: 2px solid #e5e5e5;
+  text-align: left;
+  padding: 5px;
+}
+
+.table td {
+  border: 2px solid #e5e5e5;
+  padding: 5px;
+  text-align: right
+}
+
+.button {
+  font-size: 16px;
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: #2e9fd1;
+  border: 1px solid #2e9fd1;
+  border-radius: 3px;
+  color: white;
+}

@@ -3,38 +3,57 @@
 
 <head>
   <title>GeoGuessr timer</title>
-  <link rel="stylesheet" type="text/css" href="settings.css">
+  <link href="https://fonts.googleapis.com/css?family=Raleway|Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
 </head>
 
 <body>
-  <h1><img src="../img/icon-32.png" /> GeoGuessr timer settings</h1>
+  <header class="header">
+    <span class="logo"> <img src="../../img/icon-16.png" /></span>
+    <span class="title">GeoGuessr timer - settings</span>
+  </header>
 
-  <div>
-    <span class="label">Enable extension</span>
-    <label class="switch">
-      <input type="checkbox" id="active">
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div>
+  <div class="content">
 
-    <span class="label">Enable colors</span>
-    <label class="switch">
-      <input type="checkbox" id="colors">
-      <span class="slider"></span>
-    </label>
-  </div>
+    <div class="row flex">
+      <span class="label">Enable extension</span>
+      <span class="value">
+        <label class="switch">
+          <input type="checkbox" id="active">
+          <span class="slider"></span>
+        </label>
+      </span>
+    </div>
 
-  <div>
-    <span class="label">Colums order</span>
-    <ul id="columns" class="columns">
-    </ul>
-  </div>
+    <div class="row flex">
+      <span class="label">Enable colors</span>
+      <span class="value">
+        <label class="switch">
+          <input type="checkbox" id="colors">
+          <span class="slider"></span>
+        </label>
+      </span>
+    </div>
 
-  <div class="right">
-    <button id="reset" class="reset">Reset</button>
-    <button id="save" class="submit">Save</button>
-    <a href="http://www.geoguessr.com/" target="_blank" class="geoguessr">Go to GeoGuessr</a>
+    <div class="row">
+      <span class="label">Columns order</span>
+      <ul id="columns" class="columns">
+      </ul>
+    </div>
+
+    <div class="row link">
+      <a href="./times.html" target="_blank">Personal best times</a>
+    </div>
+
+    <div class="row link">
+      <a href="http://www.geoguessr.com/" target="_blank" class="geoguessr">GeoGuessr</a>
+    </div>
+
+    <div class="row link">
+      <a href="#" target="_blank" class="reset" id="reset">Clear settings and times</a>
+    </div>
+
   </div>
 
   <script src="settings.js"></script>
