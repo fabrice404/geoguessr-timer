@@ -7,6 +7,33 @@ const decamelize = (str) => str
   .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1 $2')
   .toUpperCase();
 
+
+const load = () => {
+  bsr.storage.sync.get({
+    active: true,
+    colors: false,
+    columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
+  }, (cfg) => {
+    document.getElementById('active').checked = cfg.active;
+    document.getElementById('colors').checked = cfg.colors;
+    columns = cfg.columns;
+    loadColumns(); // eslint-disable-line no-use-before-define
+  });
+};
+
+const save = (obj, callback = null) => {
+  bsr.storage.sync.set(obj, () => {
+    if (callback != null) {
+      callback();
+    }
+  });
+};
+
+const reset = () => {
+  bsr.storage.sync.clear(() => { load(); });
+};
+
+
 const moveLeft = (key) => {
   if (!key.startsWith('_')) {
     const oldIndex = columns.indexOf(key);
@@ -16,7 +43,7 @@ const moveLeft = (key) => {
       columns[newIndex] = key;
     }
   }
-  loadColumns(); // eslint-disable-line no-use-before-define
+  save({ columns }, () => { loadColumns(); }); // eslint-disable-line no-use-before-define
 };
 
 const moveRight = (key) => {
@@ -28,7 +55,7 @@ const moveRight = (key) => {
       columns[newIndex] = key;
     }
   }
-  loadColumns(); // eslint-disable-line no-use-before-define
+  save({ columns }, () => { loadColumns(); }); // eslint-disable-line no-use-before-define
 };
 
 const loadColumns = () => {
@@ -68,49 +95,24 @@ const loadColumns = () => {
   }
 };
 
-const loadSettings = () => {
-  bsr.storage.sync.get({
-    active: true,
-    colors: false,
-    columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
-  }, (cfg) => {
-    document.getElementById('active').checked = cfg.active;
-    document.getElementById('colors').checked = cfg.colors;
-    columns = cfg.columns;
-    loadColumns();
-  });
-};
+document.addEventListener('DOMContentLoaded', () => load());
 
-const saved = () => {
-  const btn = document.getElementById('save');
-  btn.textContent = 'Saved!';
-  setTimeout(() => { btn.textContent = 'Save'; }, 1000);
-
-  loadSettings();
-};
-
-const reset = () => {
-  const btn = document.getElementById('reset');
-  btn.textContent = 'Reset!';
-  setTimeout(() => { btn.textContent = 'Reset'; }, 1000);
-
-  loadSettings();
-};
-
-document.addEventListener('DOMContentLoaded', () => loadSettings());
-
-document.getElementById('save')
-  .addEventListener('click', () => {
+document.getElementById('active')
+  .addEventListener('change', () => {
     const active = document.getElementById('active').checked;
-    const colors =  document.getElementById('colors').checked;
-    bsr.storage.sync.set({
-      active,
-      colors,
-      columns,
-    }, () => { saved(); });
+    save({ active });
+  });
+
+document.getElementById('colors')
+  .addEventListener('change', () => {
+    const colors = document.getElementById('colors').checked;
+    save({ colors });
   });
 
 document.getElementById('reset')
-  .addEventListener('click', () => {
-    bsr.storage.sync.clear(() => { reset(); });
+  .addEventListener('click', (event) => {
+    event.preventDefault();
+    if (window.confirm('Do you really want to erase your settings and best times?')) { // eslint-disable-line no-alert
+      reset();
+    }
   });

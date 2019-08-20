@@ -106,7 +106,7 @@ const save = () => {
     }
   } else {
     if (savegame[currentMap].personalBest > finalTime) {
-      console.log(`New personal best!`);
+      console.log('New personal best!');
       savegame[currentMap].personalBest = finalTime;
       for (let i = 1; i <= 5; i += 1) {
         savegame[currentMap].personalBestSplits[i] = finalTimes[i];
@@ -220,10 +220,10 @@ const tick = () => {
           totalTimePB += savegame[currentMap].personalBestSplits[i];
         }
         const color = totalTimePB > totalTimeMs ? 'green' : 'red';
-        document.getElementById(`timer-total`).setAttribute('style', `color: ${color}`);
+        document.getElementById('timer-total').setAttribute('style', `color: ${color}`);
       }
 
-      const roundTimeMs = now - roundsTime[currentRound].begin
+      const roundTimeMs = now - roundsTime[currentRound].begin;
       if (roundsTime[currentRound].end == null) {
         const roundTime = msToTime(roundTimeMs);
         document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
