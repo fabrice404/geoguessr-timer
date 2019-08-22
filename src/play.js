@@ -2,7 +2,8 @@ const TICK_INTERVAL = 1000;
 const bsr = chrome != null ? chrome : browser;
 
 let savegame;
-let colors = true;
+let roundsEnabled = true;
+let colorsEnabled = true;
 let currentMap = '';
 let currentRound = 0;
 const roundsTime = {
@@ -43,7 +44,8 @@ const msToTime = (ms, showMs = false) => {
  * @param {*} config
  */
 const init = (config) => {
-  colors = config.colors;
+  roundsEnabled = config.rounds;
+  colorsEnabled = config.colors;
 
   // calculate new columns positions
   let totalPosition = config.columns.indexOf('totalTime');
@@ -64,17 +66,18 @@ const init = (config) => {
   } else {
     gameInfo.insertBefore(totalNode, gameInfo.children[totalPosition]);
   }
-
-  for (let i = 1; i <= 5; i += 1) {
-    const roundNode = document.createElement('article');
-    roundNode.setAttribute('class', `game-info__section game-info__section--timer-round-${i}`);
-    roundNode.innerHTML = `<span class="game-info__label">Round ${i}</span><span class="game-info__value" id="timer-round-${i}">--:--</span>`;
-    if (gameInfo.children.length <= roundsPosition) {
-      gameInfo.append(roundNode);
-    } else {
-      gameInfo.insertBefore(roundNode, gameInfo.children[roundsPosition]);
+  if (roundsEnabled) {
+    for (let i = 1; i <= 5; i += 1) {
+      const roundNode = document.createElement('article');
+      roundNode.setAttribute('class', `game-info__section game-info__section--timer-round-${i}`);
+      roundNode.innerHTML = `<span class="game-info__label">Round ${i}</span><span class="game-info__value" id="timer-round-${i}">--:--</span>`;
+      if (gameInfo.children.length <= roundsPosition) {
+        gameInfo.append(roundNode);
+      } else {
+        gameInfo.insertBefore(roundNode, gameInfo.children[roundsPosition]);
+      }
+      roundsPosition += 1;
     }
-    roundsPosition += 1;
   }
 };
 
@@ -190,7 +193,7 @@ const stopRound = () => {
     const roundTime = msToTime(roundTimeMs, false);
     const roundTimeAccurate = msToTime(roundTimeMs);
     document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
-    if (savegame[currentMap] != null && colors) {
+    if (savegame[currentMap] != null && colorsEnabled) {
       let color = savegame[currentMap].personalBestSplits[currentRound] > roundTimeMs ? 'green' : 'red';
       if (savegame[currentMap].bestSegments[currentRound] > roundTimeMs) {
         color = 'gold';
@@ -226,7 +229,7 @@ const tick = () => {
       }
       totalTimeMs += (now - roundsTime[currentRound].begin);
       document.getElementById('timer-total').innerText = msToTime(totalTimeMs);
-      if (savegame[currentMap] != null && colors) {
+      if (savegame[currentMap] != null && colorsEnabled) {
         let totalTimePB = 0;
         for (let i = 1; i <= currentRound; i += 1) {
           totalTimePB += savegame[currentMap].personalBestSplits[i];
@@ -235,13 +238,15 @@ const tick = () => {
         document.getElementById('timer-total').setAttribute('style', `color: ${color}`);
       }
 
-      const roundTimeMs = now - roundsTime[currentRound].begin;
-      if (roundsTime[currentRound].end == null) {
-        const roundTime = msToTime(roundTimeMs);
-        document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
-        if (savegame[currentMap] != null && colors) {
-          const color = savegame[currentMap].personalBestSplits[currentRound] > roundTimeMs ? 'green' : 'red';
-          document.getElementById(`timer-round-${currentRound}`).setAttribute('style', `color: ${color}`);
+      if (roundsEnabled) {
+        const roundTimeMs = now - roundsTime[currentRound].begin;
+        if (roundsTime[currentRound].end == null) {
+          const roundTime = msToTime(roundTimeMs);
+          document.getElementById(`timer-round-${currentRound}`).innerText = roundTime;
+          if (savegame[currentMap] != null && colorsEnabled) {
+            const color = savegame[currentMap].personalBestSplits[currentRound] > roundTimeMs ? 'green' : 'red';
+            document.getElementById(`timer-round-${currentRound}`).setAttribute('style', `color: ${color}`);
+          }
         }
       }
     }
@@ -291,6 +296,7 @@ const loadConfig = (config) => {
 document.addEventListener('DOMContentLoaded', () => {
   bsr.storage.sync.get({
     active: true,
+    rounds: true,
     colors: false,
     columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
     savegame: {},
