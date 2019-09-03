@@ -17,5 +17,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    "no-alert": 0,
+    "no-console": 0,
   },
 };
