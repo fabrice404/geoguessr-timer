@@ -7,13 +7,12 @@ const decamelize = (str) => str
   .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1 $2')
   .toUpperCase();
 
-
 const load = () => {
   bsr.storage.sync.get({
     active: true,
     rounds: true,
     colors: false,
-    columns: ['roundTimes', 'totalTime', '_round', '_score', '_map'],
+    columns: ['roundTimes', 'totalTime', '_map', '_round', '_score'],
   }, (cfg) => {
     document.getElementById('active').checked = cfg.active;
     document.getElementById('rounds').checked = cfg.rounds;
@@ -34,7 +33,6 @@ const save = (obj, callback = null) => {
 const reset = () => {
   bsr.storage.sync.clear(() => { load(); });
 };
-
 
 const moveLeft = (key) => {
   if (!key.startsWith('_')) {

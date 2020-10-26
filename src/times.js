@@ -57,7 +57,6 @@ const load = () => {
         table.append(tr2);
         table.append(tr3);
 
-
         // create rows headers
         const rh = document.createElement('th');
         const rd1 = document.createElement('th');
