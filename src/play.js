@@ -4,12 +4,17 @@ const bsr = chrome != null ? chrome : browser;
 let config;
 let currentMap;
 let currentRound = 0;
+let isCountryStreak;
 const roundsTime = {
   1: { begin: null, end: null },
   2: { begin: null, end: null },
   3: { begin: null, end: null },
   4: { begin: null, end: null },
   5: { begin: null, end: null },
+};
+const streakTime = {
+  startTime: null,
+  roundTime: null,
 };
 
 /**
@@ -93,16 +98,31 @@ const save = () => {
   bsr.storage.sync.set(config, null);
 };
 
+const detectCountryStreak = () => {
+  const gameStatusMap = Array.from(document.querySelectorAll('.game-status'))
+    .find((e) => e.hasAttribute('data-qa') && e.getAttribute('data-qa') === 'round-number');
+  if (gameStatusMap) {
+    isCountryStreak = gameStatusMap.querySelector('.game-status__heading').textContent.trim() === 'Streak';
+    console.log({ isCountryStreak });
+  }
+};
+
 /**
  * Reset all times
  */
 const resetGame = () => {
-  currentRound = 0;
-  roundsTime[1] = { begin: null, end: null };
-  roundsTime[2] = { begin: null, end: null };
-  roundsTime[3] = { begin: null, end: null };
-  roundsTime[4] = { begin: null, end: null };
-  roundsTime[5] = { begin: null, end: null };
+  if (isCountryStreak != null || currentRound !== 0) {
+    console.log('reset game');
+    isCountryStreak = null;
+    currentRound = 0;
+    roundsTime[1] = { begin: null, end: null };
+    roundsTime[2] = { begin: null, end: null };
+    roundsTime[3] = { begin: null, end: null };
+    roundsTime[4] = { begin: null, end: null };
+    roundsTime[5] = { begin: null, end: null };
+    streakTime.startTime = null;
+    streakTime.roundTime = null;
+  }
 };
 
 /**
@@ -199,15 +219,47 @@ const createTimeNodes = () => {
   return document.querySelector('.game-status__total-time');
 };
 
+const createStreakNodes = () => {
+  const gameStatuses = document.querySelector('.game-statuses');
+  if (!gameStatuses) {
+    return null;
+  }
+
+  const totalNode = document.createElement('div');
+  totalNode.className = 'game-status game-status__total-time';
+  totalNode.innerHTML = '<div class="game-status__heading">Total time</div><div class="game-status__body">--:--</div></div>';
+  gameStatuses.prepend(totalNode);
+
+  const i = 1;
+  const roundNode = document.createElement('div');
+  roundNode.className = `game-status game-status__round${i}-time`;
+  roundNode.innerHTML = '<div class="game-status__heading">Round time</div><div class="game-status__body">--:--</div></div>';
+  gameStatuses.prepend(roundNode);
+
+  return document.querySelector('.game-status__total-time');
+};
+
 /**
  * Starts a new round timer
  */
 const startRound = () => {
+  console.log('start round');
   const now = new Date();
-  currentRound += 1;
-  if (currentRound > 0 && currentRound <= 5) {
-    roundsTime[currentRound].begin = now;
-    console.log(`Round ${currentRound} > ${now.toISOString()}`);
+  if (isCountryStreak == null) {
+    detectCountryStreak();
+  }
+
+  if (isCountryStreak) {
+    if (streakTime.startTime == null) {
+      streakTime.startTime = now;
+    }
+    streakTime.roundTime = now;
+  } else {
+    currentRound += 1;
+    if (currentRound > 0 && currentRound <= 5) {
+      roundsTime[currentRound].begin = now;
+      console.log(`Round ${currentRound} > ${now.toISOString()}`);
+    }
   }
 };
 
@@ -216,7 +268,9 @@ const startRound = () => {
  */
 const stopRound = () => {
   const now = new Date();
-  if (currentRound > 0 && currentRound <= 5) {
+  if (isCountryStreak) {
+    streakTime.roundTime = now;
+  } else if (currentRound > 0 && currentRound <= 5) {
     roundsTime[currentRound].end = now;
     const roundTimeMs = roundsTime[currentRound].end - roundsTime[currentRound].begin;
     const roundTime = msToTime(roundTimeMs, false);
@@ -237,7 +291,20 @@ const stopRound = () => {
 const tick = () => {
   const now = new Date();
   if (document.querySelector('.game-status')) {
-    if (currentRound > 0 && currentRound <= 5) {
+    if (isCountryStreak == null) {
+      detectCountryStreak();
+    }
+    if (isCountryStreak) {
+      let totalTimeNode = document.querySelector('.game-status__total-time');
+      if (totalTimeNode == null) {
+        totalTimeNode = createStreakNodes();
+      }
+      if (streakTime.startTime == null) {
+        startRound();
+      }
+      setTotalTime(msToTime(now - streakTime.startTime));
+      setRoundTime(1, msToTime(now - streakTime.roundTime));
+    } else if (currentRound > 0 && currentRound <= 5) {
       // get the current map
       if (currentMap == null) {
         const gameStatusMap = Array.from(document.querySelectorAll('.game-status'))
@@ -277,8 +344,8 @@ const tick = () => {
       }
     }
     if (currentRound === 5
-      && document.querySelector('.result .button')
-      && document.querySelector('.result .button').getAttribute('data-qa') === 'play-same-map'
+      && document.querySelector('.result .button--primary')
+      && document.querySelector('.result .button--primary').getAttribute('data-qa') === 'play-same-map'
     ) {
       showFinalTimes();
     }
@@ -290,6 +357,7 @@ const tick = () => {
 
 const init = () => {
   const observer = new MutationObserver(() => {
+    console.log('observed');
     const gameLayout = document.querySelector('.game-layout');
     const result = document.querySelector('.result');
 
