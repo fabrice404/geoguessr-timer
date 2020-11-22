@@ -1,6 +1,6 @@
 {
   "name": "geoguessr-timer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "scripts/build.js",
   "repository": "git@github.com:fabrice404/geoguessr-timer.git",
   "author": "fabrice404 <fabrice.lamant@gmail.com>",

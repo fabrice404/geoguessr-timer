@@ -356,22 +356,24 @@ const tick = () => {
 };
 
 const init = () => {
-  const observer = new MutationObserver(() => {
-    console.log('observed');
-    const gameLayout = document.querySelector('.game-layout');
-    const result = document.querySelector('.result');
+  if (config.active) {
+    const observer = new MutationObserver(() => {
+      console.log('observed');
+      const gameLayout = document.querySelector('.game-layout');
+      const result = document.querySelector('.result');
 
-    if (gameLayout) {
-      if (result) {
-        stopRound();
-      } else {
-        startRound();
+      if (gameLayout) {
+        if (result) {
+          stopRound();
+        } else {
+          startRound();
+        }
       }
-    }
-  });
+    });
 
-  observer.observe(document.querySelector('.layout__main'), { childList: true, subtree: false });
-  tick();
+    observer.observe(document.querySelector('.layout__main'), { childList: true, subtree: false });
+    tick();
+  }
 };
 
 document.onreadystatechange = () => {
