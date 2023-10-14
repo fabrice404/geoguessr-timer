@@ -22,3 +22,8 @@ In this phase I have tested my fixed version with Google Chrome only, not Firefo
   - Changed the layout so that in the classic mode the round times are under the map name etc. for to prevent overlap with the compass.
   - Removed color settings etc. because they were not compatible with the current layout at all.
 
+### TODO
+
+  - Show time(s) on streak summary page.
+
+
