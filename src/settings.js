@@ -11,12 +11,10 @@ const load = () => {
   bsr.storage.sync.get({
     active: true,
     rounds: true,
-    colors: false,
     columns: ['roundTimes', 'totalTime', '_map', '_round', '_score'],
   }, (cfg) => {
     document.getElementById('active').checked = cfg.active;
     document.getElementById('rounds').checked = cfg.rounds;
-    document.getElementById('colors').checked = cfg.colors;
     columns = cfg.columns;
     loadColumns(); // eslint-disable-line no-use-before-define
   });
@@ -103,11 +101,6 @@ document.getElementById('active')
     save({ active });
   });
 
-document.getElementById('colors')
-  .addEventListener('change', () => {
-    const colors = document.getElementById('colors').checked;
-    save({ colors });
-  });
 document.getElementById('rounds')
   .addEventListener('change', () => {
     const rounds = document.getElementById('rounds').checked;
