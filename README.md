@@ -26,6 +26,7 @@ In this phase I have tested my fixed version with Google Chrome only, not Firefo
 ### TODO
 
   - Remove a little outdated presonal times functionality? The code is still there but not used.
+  - Make this work in Daily Challgenge too.
 
 ### Notes
 
