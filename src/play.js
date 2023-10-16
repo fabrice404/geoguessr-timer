@@ -6,6 +6,7 @@ let currentMap;
 let currentRound = 0;
 let isStreak;
 let inGame = false;
+let roundRunning = false;
 const roundsTime = {
   1: { begin: null, end: null },
   2: { begin: null, end: null },
@@ -16,6 +17,8 @@ const roundsTime = {
 const streakTime = {
   startTime: null,
   roundTime: null,
+  totalTime: null,
+  roundTimes: []
 };
 
 /**
@@ -172,6 +175,28 @@ const showFinalTimes = () => {
 };
 
 /**
+ * Show times in streak summary view
+ */
+const streakSummary = () => {
+  if (streakTime.totalTime == null) return;
+
+  titleNode = document.querySelector('h2[class^="streak-final-result_title"]');
+  timeNode = document.createElement("h2");
+  timeNode.textContent = "The total game time was " + streakTime.totalTime;
+  timeNode.className = titleNode.className;
+  titleNode.parentNode.insertBefore(timeNode, titleNode.nextSibling);
+
+  roundsList = document.querySelectorAll('li[class^="streak-result-list_listItem"]');
+  for (let i = 0; i < roundsList.length; i++) {
+    timeNode = document.createElement('div');
+    timeNode.innerHTML = streakTime.roundTimes[i];
+    timeNode.style.flexGrow = 1;
+    timeNode.style.textAlign = "right";
+    roundsList[i].append(timeNode);
+  }
+}
+
+/**
  * Update round node time
  * @param {*} round
  * @param {*} time
@@ -271,6 +296,7 @@ const createStreakNodes = () => {
 const startRound = () => {
   console.log('start round');
   inGame = true;
+  roundRunning = true;
   const now = new Date();
   if (isStreak == null) {
     detectStreak();
@@ -280,6 +306,8 @@ const startRound = () => {
     if (streakTime.roundTime == null) {
       if (streakTime.startTime == null) {
         streakTime.startTime = now;
+        streakTime.totalTime = null;
+        streakTime.roundTimes = [];
       }
       streakTime.roundTime = now;
       console.log(`Streak round > ${now.toISOString()}`);
@@ -300,9 +328,14 @@ const startRound = () => {
  * Ends the current round timer
  */
 const stopRound = () => {
+  console.log('stop round');
+  roundRunning = false;
   const now = new Date();
   if (isStreak) {
     if (streakTime.roundTime != null) {
+      console.log('Last round time was ' + msToTime(now - streakTime.roundTime, false) + ', Total streak time so far ' + msToTime(now - streakTime.startTime, false));
+      streakTime.roundTimes.push(msToTime(now - streakTime.roundTime, false));
+      streakTime.totalTime = msToTime(now - streakTime.startTime, false);
       streakTime.roundTime = null;
     }
   } else if (currentRound > 0 && currentRound <= getMaxRounds()) {
@@ -331,7 +364,6 @@ const tick = () => {
       }
       if (streakTime.startTime == null && document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]')
           && !document.querySelector('button[data-qa="play-again-button"]')) {
-          //  && !document.querySelector('div[class^="streak-round-result"]') && !document.querySelector('h2[class^="streak-final-result"]')) {
           console.log("starttime null, " + streakTime.startTime);
           startRound();
       }
@@ -340,7 +372,6 @@ const tick = () => {
           setRoundTime(1, msToTime(now - streakTime.roundTime));
       }
     } else if (currentRound > 0 && currentRound <= getMaxRounds()) {
-      // get the current map
       if (currentMap == null) {
         const mapNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="map-name"]');
         if (mapNode) {
@@ -370,9 +401,13 @@ const tick = () => {
     }
     if (inGame) {
         if (document.querySelector('button[data-qa="play-again-button"]')) {
-          console.log("play again button detected ");
+          console.log("Play again button detected. Game Over.");
           resetGame();
         }
+    }
+    // if there are more than 1 title, streakSummary is already run.
+    if (document.querySelectorAll('h2[class^="streak-final-result_title"]').length == 1) {
+        streakSummary();
     }
   } else {
     resetGame();
@@ -388,8 +423,8 @@ const init = () => {
 
       if (gameLayout) {
         if (resultLayout) {
-          stopRound();
-        } else if (currentRound !== getCurrentRound()) {
+          if (roundRunning) stopRound();
+        } else if (currentRound !== getCurrentRound() && !roundRunning) {
           console.log("startround from init " + currentRound + " " + getCurrentRound());
           startRound();
         }
