@@ -1,8 +1,8 @@
 {
   "name": "GeoGuessr timer",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "This extension adds timers to GeoGuessr score bar",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "permissions": [
     "storage"
   ],
@@ -27,7 +27,7 @@
   "options_ui": {
     "page": "src/settings.html"
   },
-  "browser_action": {
+  "action": {
     "default_title": "GeoGuessr Timer",
     "default_popup":  "src/settings.html"
   }
