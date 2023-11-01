@@ -27,8 +27,3 @@ In this phase I have tested my fixed version with Google Chrome only, not Firefo
 
   - Remove a little outdated presonal times functionality? The code is still there but not used.
   - Make this work in Daily Challenge too.
-
-### Notes
-
-  - After aborting a game a page reload should be done eg. by pressing F5. Otherwise the rounds aren't right.
-
