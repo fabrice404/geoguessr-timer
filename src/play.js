@@ -123,6 +123,7 @@ const resetGame = () => {
     isStreak = null;
     currentMap = null;
     currentRound = 0;
+    roundRunning = false;
     roundsTime[1] = { begin: null, end: null };
     roundsTime[2] = { begin: null, end: null };
     roundsTime[3] = { begin: null, end: null };
@@ -353,7 +354,7 @@ const stopRound = () => {
 
 const tick = () => {
   const now = new Date();
-  if (document.querySelector('main[class^="in-game_layout"]')) {
+  if (document.querySelector('div[class^="game_status__"]')) {
     if (isStreak == null) {
       detectStreak();
     }
@@ -418,10 +419,10 @@ const tick = () => {
 const init = () => {
   if (config.active) {
     const observer = new MutationObserver(() => {
-      const gameLayout = document.querySelector('main[class^="in-game_layout"]');
+      const gameStatus = document.querySelector('div[class^="game_status__"]');
       const resultLayout = document.querySelector('div[class^="result-layout_root"]');
 
-      if (gameLayout) {
+      if (gameStatus) {
         if (resultLayout) {
           if (roundRunning) stopRound();
         } else if (currentRound !== getCurrentRound() && !roundRunning) {
