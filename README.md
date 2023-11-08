@@ -11,12 +11,11 @@ This repo is the source code of the __GeoGuessr timer__ browser extension.
 
 On October 11th 2023 GeoGuessr changed some CSS names in their game and the extension stopped working. I can't live without it, so I had to fix it.
 
-In this phase I have tested my fixed version with Google Chrome only, not Firefox (yet).
-
 ### Fixed issues and added features
 
-  - Works with 2023 layout of GeoGuessr.
-  - Now works in quick play mode too.
+  - Works with 2023 layout of GeoGuessr in Google Chrome and Firefox.
+  - Works in quick play mode.
+  - Works in Daily Challenge.
   - Works in country, US state and community streaks.
   - Shows times in streak summary page.
   - Starting a new game by clicking "Play Again" showed round times from the previous game.
@@ -26,4 +25,3 @@ In this phase I have tested my fixed version with Google Chrome only, not Firefo
 ### TODO
 
   - Remove a little outdated presonal times functionality? The code is still there but not used.
-  - Make this work in Daily Challenge too.

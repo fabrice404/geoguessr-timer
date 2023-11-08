@@ -203,7 +203,12 @@ const streakSummary = () => {
  * @param {*} time
  */
 const setRoundTime = (round, time) => {
-  document.querySelector(`#round${round}-time`).textContent = time;
+  rt = document.querySelector(`#round${round}-time`);
+  if (rt) {
+     rt.textContent = time;
+  } else {
+     createTimeNodes();
+  }
 };
 
 /**
@@ -211,7 +216,12 @@ const setRoundTime = (round, time) => {
  * @param {*} time
  */
 const setTotalTime = (time) => {
-  document.querySelector('#total-time').innerText = time;
+  tt = document.querySelector('#total-time');
+  if (tt) {
+      tt.innerText = time;
+  } else {
+      createTimeNodes();
+  }
 };
 
 const getCurrentRound = () => {
@@ -229,9 +239,12 @@ const getCurrentRound = () => {
 
 const getMaxRounds = () => {
   const roundNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]');
-  return parseInt(roundNode.children[1].textContent.split(/\//gi)[1].trim(), 10);
+  if (roundNode) {
+      return parseInt(roundNode.children[1].textContent.split(/\//gi)[1].trim(), 10);
+  } else {
+      return 5; // kludge for daily challenge
+  }
 };
-
 
 /**
  * Create time nodes in game status bar
@@ -243,10 +256,13 @@ const createTimeNodes = () => {
   }
   if (getMaxRounds() == 1 || config.rounds != true) {
       flexNode = roundNode.parentNode;
+      flexNode.id = "timernode";
   } else {
       flexNode = roundNode.parentNode.cloneNode(false);
+      flexNode.id = "timernode";
       flexNode.style.marginLeft = '1rem'; // a little space
   }
+
   roundNode.parentNode.parentNode.append(flexNode);
 
   const totalTimeNode = document.querySelector('#total-time');
@@ -315,7 +331,7 @@ const startRound = () => {
       currentRound = getCurrentRound();
     }
   } else {
-    currentRound += 1;
+    currentRound = getCurrentRound();
     if (currentRound > 0 && currentRound <= getMaxRounds()) {
       if (roundsTime[currentRound].begin == null) {
         roundsTime[currentRound].begin = now;
@@ -399,6 +415,8 @@ const tick = () => {
           setRoundTime(currentRound, msToTime(roundTimeMs));
         }
       }
+    } else {
+      startRound();
     }
     if (inGame) {
         if (document.querySelector('button[data-qa="play-again-button"]')) {
