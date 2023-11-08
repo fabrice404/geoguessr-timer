@@ -25,4 +25,3 @@ On October 11th 2023 GeoGuessr changed some CSS names in their game and the exte
 ### TODO
 
   - Remove a little outdated presonal times functionality? The code is still there but not used.
-
