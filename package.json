@@ -14,7 +14,7 @@
     "addons-linter": "^7.7.0",
     "archiver": "^7.0.1",
     "copy-dir": "^1.3.0",
-    "eslint": "^8.56.0",
+    "eslint": "^9.20.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.31.0",
     "nodemon": "^3.1.9",
